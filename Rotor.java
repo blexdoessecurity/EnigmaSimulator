@@ -8,42 +8,30 @@ public class Rotor {
 	
 	public Rotor (String rotorConfig, char wheelPosition, char ringSetting, char notchPosition) {
 		
+		// The rotor configuration is constant for every type of rotor and is a string
 		this.rotorConfig = rotorConfig;
 		
-		if (Character.isLetter(wheelPosition)) {
-			
-			wheelPosition = Character.toUpperCase(wheelPosition);
-			this.wheelPosition = EnigmaConstants.PLAINTEXT.indexOf(wheelPosition);
-		} else {
-			
-			throw new IllegalArgumentException("The character is not a letter!");
-		}
-		
-		if(Character.isLetter(notchPosition)) {
-			
-			notchPosition = Character.toUpperCase(notchPosition);
-			this.notchPosition = EnigmaConstants.PLAINTEXT.indexOf(notchPosition) ;
-		} else {
-			
-			throw new IllegalArgumentException("The character is not a letter!");
-		}
-		
-		if(Character.isLetter(ringSetting)) {
-			
-			ringSetting = Character.toUpperCase(ringSetting);
-			this.ringSetting = EnigmaConstants.PLAINTEXT.indexOf(ringSetting) ;
-		}
+		this.wheelPosition = EnigmaConstants.getCharIndex(wheelPosition);
+		this.notchPosition = EnigmaConstants.getCharIndex(notchPosition);
+		this.ringSetting = EnigmaConstants.getCharIndex(ringSetting);
 	} // END OF CONSTRUCTOR
 
-	// dir = 0 means R->L
-	// dir = 1 means L->R
 	public int getEncodedChar(int dir, int number) {
 		
+		// We subtract from our number index the ringstellung
+		// because it rotates counter-clockwise (looking from right)
+		// Then we normalise the number (put it between 1 and 26)
 		number = number - ringSetting;
 		number = normaliseNumber(number);
 		
+		// We add the grundstellung to the index
+		// because it rotates clockwise (looking from right)
+		// Then we normalise the number
 		number = number + wheelPosition;
 		number = normaliseNumber(number);
+		
+		// dir = 0 means R->L
+		// dir = 1 means L->R
 		if(dir == 0) {
 			
 			char c = rotorConfig.charAt(number);
@@ -53,6 +41,8 @@ public class Rotor {
 			char c = EnigmaConstants.PLAINTEXT.charAt(number);
 			number = rotorConfig.indexOf(c);
 		}
+		
+		// We do the inverse of our opperations to obtain the character
 		number = number - wheelPosition;
 		number = normaliseNumber(number);
 		

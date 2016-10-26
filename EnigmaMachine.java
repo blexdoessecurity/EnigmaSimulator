@@ -5,30 +5,25 @@ public class EnigmaMachine {
 	private Rotor mrotor;
 	private Rotor rrotor;
 	private Reflector reflector;
+	private Plugboard plugboard;
 	
 	// CONSTRUCTOR
-	public EnigmaMachine(Rotor lrotor, Rotor mrotor, Rotor rrotor, Reflector reflector) {
+	public EnigmaMachine(Rotor lrotor, Rotor mrotor, Rotor rrotor, Reflector reflector, Plugboard plugboard) {
 		
 		this.lrotor = lrotor;
 		this.mrotor = mrotor;
 		this.rrotor = rrotor;
 		this.reflector = reflector;
+		this.plugboard = plugboard;
+		
 	} // END OF CONSTRUCTOR
 	
 	public char getEncodedChar(char c) {
 		
-		if (Character.isLetter(c)) {
-			
-			c = Character.toUpperCase(c);
-		} else {
-			
-			throw new IllegalArgumentException("The character is not a letter!");
-		}
+		int characterIndex = EnigmaConstants.getCharIndex(c);
 		
-
-		int characterIndex = EnigmaConstants.PLAINTEXT.indexOf(c);
-
 		incrementRotors(lrotor, mrotor, rrotor);
+		characterIndex = plugboard.getEncodedChar(characterIndex);
 		characterIndex = rrotor.getEncodedChar(0, characterIndex);
 		characterIndex = mrotor.getEncodedChar(0, characterIndex);
 		characterIndex = lrotor.getEncodedChar(0, characterIndex);
@@ -36,6 +31,7 @@ public class EnigmaMachine {
 		characterIndex = lrotor.getEncodedChar(1, characterIndex);
 		characterIndex = mrotor.getEncodedChar(1, characterIndex);
 		characterIndex = rrotor.getEncodedChar(1, characterIndex);
+		characterIndex = plugboard.getEncodedChar(characterIndex);
 		
 		c = EnigmaConstants.PLAINTEXT.charAt(characterIndex);
 		return c;
